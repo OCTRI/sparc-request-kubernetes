@@ -1,0 +1,26 @@
+# ConfigMap for sparc-dev
+#
+# k8s documentation:
+# - https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#create-a-configmap
+#
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: sparc
+data:
+  RAILS_ENV: development
+  CACHE_CLASSES: "true"
+  sparc_version: 3.8.1
+  SPARC_VERSION: 3.8.1
+  institution: YOUR_INSTITUTION_HERE
+  time_zone: Pacific Time (US & Canada)
+  TZ: America/Los_Angeles
+  use_short_interaction: "true"
+  sender_address: YOUR_EMAIL@example.edu
+  SQL_MODE: STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+  DEFAULT_HOME_COLUMNS: srid,rmid,status,short_title,pi,coordinators,irb_approval_date,irb_expiration_date,organizations
+  SHIBBOLETH_REQUEST_TYPE: header
+  org_logo: logos/YOUR_logo.jpg
+  institution_logo: logos/YOUR_OTHER_logo.jpg
+  ROOT_URL: https://example.edu
+  USE_COMPILED_ASSETS: "true"

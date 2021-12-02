@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparcdelayedjob
+  labels:
+    app: sparcdelayedjob
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparcdelayedjob
+  template:
+    metadata:
+      labels:
+        app: sparcdelayedjob
+    spec:
+      containers:
+      - name: sparc
+        image: example.edu/sparc_request:latest
+        command: ["rails"]
+        args: ["jobs:work"]
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 50m
+          limits:
+            memory: 1024Mi
+            cpu: 500m
+        livenessProbe:
+          exec:
+            command:
+              - rails
+              - jobs:check[60]
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        envFrom:
+        - configMapRef:
+            name: sparc
+        - secretRef:
+            name: sparc
+        volumeMounts:
+        - name: nfs
+          mountPath: /sparc/public/system
+          subPath: sparc/system
+        - name: nfs
+          mountPath: /sparc/public/assets
+          subPath: sparc/assets
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+            claimName: nfs

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sparc
+  labels:
+    app: sparc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sparc
+  template:
+    metadata:
+      labels:
+        app: sparc
+    spec:
+      containers:
+      - name: sparc
+        image: example.edu/sparc_request:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 50m
+          limits:
+            memory: 2048Mi
+            cpu: 1500m
+        ports:
+        - containerPort: 3000
+          name: rails
+        livenessProbe:
+          httpGet:
+            path: /robots.txt
+            port: rails
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 7
+        envFrom:
+        - configMapRef:
+            name: sparc
+        - secretRef:
+            name: sparc
+        volumeMounts:
+        - name: nfs
+          mountPath: /opt/sparc/public/system
+          subPath: sparc/system
+        - name: nfs
+          mountPath: /opt/sparc/public/assets
+          subPath: sparc/assets
+      initContainers:
+      - name: init-sparc-migrations
+        image: example.edu/sparc_request:latest
+        imagePullPolicy: Always
+        command: ['rails', 'db:migrate']
+        envFrom:
+        - configMapRef:
+            name: sparc
+        - secretRef:
+            name: sparc
+        env:
+        - name: CACHE_CLASSES
+          value: 'false'
+        volumeMounts:
+        - name: nfs
+          mountPath: /opt/sparc/public/assets
+          subPath: sparc/assets
+      - name: init-sparc-assets
+        image: example.edu/sparc_request:latest
+        imagePullPolicy: Always
+        command: ['rails', 'assets:precompile']
+        envFrom:
+        - configMapRef:
+            name: sparc
+        - secretRef:
+            name: sparc
+        volumeMounts:
+        - name: nfs
+          mountPath: /opt/sparc/public/assets
+          subPath: sparc/assets
+      volumes:
+      - name: nfs
+        persistentVolumeClaim:
+            claimName: nfs
