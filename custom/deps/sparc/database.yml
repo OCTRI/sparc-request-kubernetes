@@ -1,0 +1,24 @@
+# Override database.yml to obtain credentials from environment variables.
+defaults: &defaults
+  adapter: mysql2
+  encoding: utf8
+  pool: <%= ENV['RAILS_MAX_THREADS'] || 5 %>
+  timeout: 5000
+  username: <%= ENV['SPARC_DB_USER'] %>
+  password: <%= ENV['SPARC_DB_PASS'] %>
+  database: <%= ENV['SPARC_DB_NAME'] %>
+  host: <%= ENV['SPARC_DB_HOST'] %>
+  variables:
+    sql_mode: <%= ENV['SQL_MODE'] %>
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
