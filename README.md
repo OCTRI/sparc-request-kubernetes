@@ -18,7 +18,7 @@ We have two deployment workloads defined; one for the main application and a sec
 
 The main SPARCRequest application generally runs well inside Kubernetes, a single process Puma web server running the rails app. As seen in the [`deployment`](./k8s/deployment.yaml) manifest, we specify the resources, configuration, liveness, initContainers and any volumes required for persistence.
 
-The `initContainers` are used to perform database migrations and asset compilation.
+The `initContainers` are used to perform database migrations and asset compilation and must run to completion before the main workload starts.
 
 The volumes persist the things like attachments. We use a NFS  `PersistentVolume` to preserve these files beyond the lifespan of a pod.
 
