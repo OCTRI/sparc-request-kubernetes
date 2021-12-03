@@ -1,6 +1,6 @@
 # SPARCRequest - Kubernetes
 
-This reference project can be used to inform how your group could run SPARCRequest in a Kubernetes environment. The following is representative how OCTRI chose to implement SPARCRequest.
+This reference project can be used to inform how your group could run SPARCRequest in a Kubernetes environment. The following is representative of how OCTRI chose to implement SPARCRequest.
 
 ## Considerations for running SPARCRequest in Kubernetes
 
@@ -8,7 +8,7 @@ This reference project can be used to inform how your group could run SPARCReque
 
 By using a second image we are able to modify our instance of SPARCRequest without needing to maintain a separate branch in source control.
 
-See the Image section below for a description how we build and manage our SPARCRequest instance.
+See the Image section below for a description of how we build and manage our SPARCRequest instance.
 
 ### Deployments
 
@@ -37,16 +37,16 @@ This can be seen in the [`deployment_delayed_job`](./k8s/deployment_delayed_job.
 
 ### Configuration
 
-Much of SPARCRequest's configuration is either performed via a number of files in the `config` directory. To minimize the amount of modification of the configuration files we converted them to rely on environment variables. See the [`database.yml`](./custom/deps/sparc/database.yml) file as an example. By externalizing the configuration we can use the same code in any environment, only updating configuration as needed.
+Much of SPARCRequest's configuration is performed via a number of files in the `config` directory. To minimize the amount of modification of the configuration files we converted them to rely on environment variables. See the [`database.yml`](./custom/deps/sparc/database.yml) file as an example. By externalizing the configuration we can use the same code in any environment, only updating configuration as needed.
 
-Then by using a [`ConfigMap`](./k8s/config.yaml) and [`Secrets`](./k8s/secrets.yaml) we can deploy the same image to any of our environments (dev, stage, prod) and it will be configured appropriately. The [`Deployment`](./k8s/deployment.yaml) and other resources can then reference to same configuration. See the [`deployment.yaml`](./k8s/deployment.yaml#L38) for an example how the configuration is referenced.
+Then by using a [`ConfigMap`](./k8s/config.yaml) and [`Secrets`](./k8s/secrets.yaml) we can deploy the same image to any of our environments (dev, stage, prod) and it will be configured appropriately. The [`Deployment`](./k8s/deployment.yaml) and other resources can then reference the same configuration. See the [`deployment.yaml`](./k8s/deployment.yaml#L38) for an example of how the configuration is referenced.
 
 
 ### Scheduled Tasks
 
 #### RMID / IRB Service
 
-MUSC operates another application that, among other things, synchronizes the IRB records associated with Protocols and Projects in SPARCRequest. This was an essential feature that OHSU needed to ensure that work perform for projects was in compliance with the IRB status. To that end we built an API compatible application that allowed SPARCRequest to retrieve IRB information. We also run it as a daily scheduled task to ensure all IRB records in SPARCRequest are up to date. The [`cron_irb.yaml`](./k8s/cron_irb.yaml) is an example of running a scheduled task to retrieve the IRB records.
+MUSC operates another application that, among other things, synchronizes the IRB records associated with Protocols and Projects in SPARCRequest. This was an essential feature that OHSU needed to ensure that work performed for projects was in compliance with the IRB status. To that end, we built an API compatible application that allowed SPARCRequest to retrieve IRB information. We also run it as a daily scheduled task to ensure all IRB records in SPARCRequest are up to date. The [`cron_irb.yaml`](./k8s/cron_irb.yaml) is an example of running a scheduled task to retrieve the IRB records.
 
 ### Accessing the application in the cluster
 
@@ -60,7 +60,7 @@ We chose to use two images as our approach in order to maintain a clean separati
 
 ### SPARCRequest base image
 
-The first step is build the [base-image](./base-image/Dockerfile) which builds a container image directly from a SPARCRequest tag. We use [Docker](https://www.docker.com/) tobuild our images.
+The first step is to build the [base-image](./base-image/Dockerfile) which builds a container image directly from a SPARCRequest tag. We use [Docker](https://www.docker.com/) to build our images.
 
 ```bash
 cd base-image
@@ -90,7 +90,7 @@ docker build --rm -t example.edu/sparc_request --pull .
 
 We recommend that you have your Ingress and PersistentVolume resources setup to your satisfaction before attempting to run SPARCRequest in the cluster.
 
-Once you have your images build you can deploy them to the cluster using the `kubectl` command line tool. The first time you attempt deploy you should make sure to run it in the following order to ensure the deployments have everything they need.
+Once you have your images build you can deploy them to the cluster using the `kubectl` command line tool. The first time you attempt to deploy you should make sure to run it in the following order to ensure the deployments have everything they need.
 
 ```bash
 kubectl apply -f ./k8s/config.yaml -f ./k8s/secrets.yaml -f service.yaml
