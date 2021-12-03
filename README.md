@@ -22,7 +22,7 @@ The `initContainers` are used to perform database migrations and asset compilati
 
 The volumes persist the things like attachments. We use a NFS  `PersistentVolume` to preserve these files beyond the lifespan of a pod.
 
-The `livenessProbe` informs the scheduler when the new pod is up and that it can terminate the old pod. This is important because the database migrations and asset compilation can take a bit of time and this reduces the time the application is unavailable.
+The `livenessProbe` informs the scheduler when the container is unresponsive and that it should restart the pod. This ensures that if for any reason the application fails it will be restarted without intervention.
 
 #### Delayed Job
 
